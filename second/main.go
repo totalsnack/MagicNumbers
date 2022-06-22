@@ -2,53 +2,35 @@ package main
 
 import (
 	"fmt"
-	"log"
 )
 
 func main() {
-	input := "-1 2 3 4 5"
+	input := "1 9 3 4 -5"
 	var (
-		result        string
+		start, end    int
 		num, max, min int32
-		neg           int32 = 1
-		length              = len(input) - 1
+		length        = len(input) - 1
+		numStr        string
+		result        string
 	)
-	StrInt := func(num *int32, char int32) {
-		if char >= '0' && char <= '9' {
-			*num *= 10         // збільшуємо розряд числа з кожною значущою цифрою
-			*num += char - '0' // ASCII code --> 0-9
-		} else {
-			log.Fatal("невірний формат даних [0-9 ]")
-		}
 
-	}
 	for i, char := range input {
-		switch {
-		case i == length: // останнє число у вхідних даних (або перше та єдине)
-			StrInt(&num, char)
-			fallthrough // gotcha!
-		case char == ' ':
-			num *= neg // маємо сформоване число зі знаком
+		if char == ' ' || i == length {
+			end, start = i+1, end
+			numStr = input[start:end]
+			num = StrToInt(numStr)
 
-			if i == 0 { // TODO: MinMax(). Можливо, буде доречно використати *int32
-				min = num
+			if i == 0 { // TODO: MaxMin()
 				max = num
+				min = num
 			} else {
-				if min > num {
-					min = num
-				}
-				if max < num {
+				if num > max {
 					max = num
 				}
+				if num < min {
+					min = num
+				}
 			}
-			num = 0 // обнуляємо лічильники для базового випадку
-			neg = 1
-		default:
-			if char == '-' {
-				neg = -1
-				continue
-			}
-			StrInt(&num, char)
 		}
 	}
 	if max != min {
@@ -56,5 +38,21 @@ func main() {
 	} else {
 		result = fmt.Sprintf("%v", max)
 	}
-	fmt.Println(result)
+	fmt.Println("результат", result)
+}
+
+func StrToInt(str string) (num int32) {
+	var neg int32 = 1
+	for _, char := range str {
+		if char == '-' {
+			neg = -1
+			continue
+		}
+		if char >= '0' && char <= '9' {
+			num *= 10         // збільшуємо розряд числа з кожною значущою цифрою
+			num += char - '0' // ASCII --> 0-9
+		}
+	}
+	num *= neg
+	return
 }
