@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	input := "1 9 3 4 -5"
+	input := "1 2 3 16"
 	var (
 		start, end    int
 		num, max, min int32
@@ -19,18 +19,7 @@ func main() {
 			end, start = i+1, end
 			numStr = input[start:end]
 			num = StrToInt(numStr)
-
-			if i == 0 { // TODO: MaxMin()
-				max = num
-				min = num
-			} else {
-				if num > max {
-					max = num
-				}
-				if num < min {
-					min = num
-				}
-			}
+			max, min = MaxMin(max, min, num, start)
 		}
 	}
 	if max != min {
@@ -55,4 +44,19 @@ func StrToInt(str string) (num int32) {
 	}
 	num *= neg
 	return
+}
+
+func MaxMin(max, min, num int32, start int) (int32, int32) {
+	if start == 0 {
+		max = num
+		min = num
+		return max, min
+	}
+	if max < num {
+		max = num
+	}
+	if min > num {
+		min = num
+	}
+	return max, min
 }
